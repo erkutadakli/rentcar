@@ -1,15 +1,15 @@
-exports.success= (http,data)=> {
+exports.success= (http,status,data)=> {
 const responseObj = {
     status: true,
     data
 }
-http.status(200).send(responseObj);
+http.status(status).send(responseObj);
 };
 
-exports.error= (http,data)=> {
+exports.error= (http,status,data)=> {
     const responseObj = {
         status: false,
         data
     }
-    http.status(500).send(responseObj);
+    http.status(status).send(responseObj);
 };

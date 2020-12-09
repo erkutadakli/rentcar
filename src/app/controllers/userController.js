@@ -7,7 +7,7 @@ const UserModel = require('../models/userModel');
 exports.register = (req, res, next) => {
     bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
-            messages.error(http, null);
+            messages.error(http,500, null);
         }
         const user = new UserModel({
             email: req.body.email,
@@ -18,10 +18,10 @@ exports.register = (req, res, next) => {
         });
         user.save()
             .then(resp => {
-                messages.success(res, resp)
+                messages.success(res,200, resp)
             })
             .catch(err => {
-                messages.error(res, err)
+                messages.error(res,500, err)
             })
     })
 
@@ -31,12 +31,12 @@ exports.login = (req,res,next)=> {
     .exec()
     .then(user=> {
         if (user.length < 1) {
-            return messages.error(res,{message:"Auth failed"})
+            return messages.error(res,401,{message:"Auth failed"})
           }
 
           bcrypt.compare(req.body.password, user[0].password, (err, result) => { 
             if (err) { 
-                return messages.error(res,{message:"Auth failed"})
+                return messages.error(res,401,{message:"Auth failed"})
             }
             if (result) {
                 const token = jwt.sign(
@@ -49,9 +49,9 @@ exports.login = (req,res,next)=> {
                       expiresIn: "1h"
                   }
                 );
-                return messages.success(res,token);
+                return messages.success(res,200,token);
               }
-              return messages.error(res,{message:"Auth failed"})
+              return messages.error(res,401,{message:"Auth failed"})
           })
     })
 }
